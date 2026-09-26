@@ -164,7 +164,7 @@ jobs:
       - name: Read configuration matrix.
         shell: bash
         run: |
-          ARTIFACT_NAME="Telegram"
+          ARTIFACT_NAME="DaskGram"
 
           ARCH=""
           if [ -n "${{ matrix.arch }}" ]; then
@@ -237,7 +237,7 @@ jobs:
         run: |
           set OUT=%TBUILD%\%REPO_NAME%\out\Debug
           mkdir artifact
-          move %OUT%\Telegram.exe artifact/
+          move %OUT%\DaskGram.exe artifact/
           move %OUT%\Updater.exe artifact/
       - uses: actions/upload-artifact@v7
         name: Upload artifact.
@@ -245,4 +245,4 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: artifact\
-          retention-days: 1
+          retention-days: 30
