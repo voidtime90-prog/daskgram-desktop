@@ -22,9 +22,14 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 namespace {
 
 // DaskGram: Google Translate by default (free public endpoint, no API key).
+//
+// client=dict-chrome-ex matters: the classic client=gtx is answered with
+// HTTP 429 ("Sorry...") from ordinary IPs, while dict-chrome-ex returns the
+// segmented array ParseSegmentedArrayResponse expects:
+//   [[["text","source",null,null,3]],null,"en"]
 const auto kDaskGramTranslateUrl = QString::fromLatin1(
 	"https://translate.googleapis.com/translate_a/single"
-	"?client=gtx&dt=t&sl=%f&tl=%t&q=%q");
+	"?client=dict-chrome-ex&dt=t&sl=%f&tl=%t&q=%q");
 
 base::options::option<QString> OptionTranslateUrlTemplate({
 	.id = "translate-url-template",
