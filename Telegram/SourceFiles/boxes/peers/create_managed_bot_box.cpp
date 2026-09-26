@@ -267,7 +267,7 @@ void CreateManagedBotBox(
 		const auto text = tr::lng_create_bot_username_link(
 			tr::now,
 			lt_link,
-			u"t.me/"_q + full);
+			u"daskgram.xyz/"_q + full);
 		state->errorText = QString();
 		state->goodText = text;
 		statusLabel->setText(text);

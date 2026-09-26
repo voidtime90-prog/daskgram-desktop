@@ -78,7 +78,7 @@ constexpr auto kReminderSetToastDuration = 4 * crl::time(1000);
 	using namespace qthelp;
 
 	return regex_match(
-		"(^|\\.)(telegram\\.(me|dog)|t\\.me)$",
+		"(^|\\.)daskgram\\.xyz$",
 		url.host(),
 		RegExOption::CaseInsensitive).valid();
 }

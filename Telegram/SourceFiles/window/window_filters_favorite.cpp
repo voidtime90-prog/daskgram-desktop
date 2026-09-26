@@ -53,7 +53,7 @@ base::options::option<QString> FavoriteLink({
 	.id = kOptionFolderFavoriteLink,
 	.name = "Favorite folder button",
 	.description = "Favorite button at the bottom of the folders strip "
-		"that opens a tg:// or t.me/ link.",
+		"that opens a tg:// or daskgram.xyz/ link.",
 });
 
 enum class Category {

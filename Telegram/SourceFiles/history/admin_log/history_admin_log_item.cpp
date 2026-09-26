@@ -456,7 +456,7 @@ QString GenerateInviteLinkText(const MTPExportedChatInvite &data) {
 		u"https://"_q,
 		QString()
 	).replace(
-		u"t.me/joinchat/"_q,
+		u"daskgram.xyz/joinchat/"_q,
 		QString()
 	) : label;
 }
