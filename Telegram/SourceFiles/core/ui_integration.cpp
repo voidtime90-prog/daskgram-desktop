@@ -421,7 +421,7 @@ bool UiIntegration::handleUrlClick(
 	if (UrlClickHandler::IsEmail(url)) {
 		File::OpenEmailLink(url);
 		return true;
-	} else if (local.startsWith(u"tg://"_q, Qt::CaseInsensitive)) {
+	} else if (local.startsWith(u"dg://"_q, Qt::CaseInsensitive)) {
 		Core::App().openLocalUrl(local, context);
 		return true;
 	} else if (local.startsWith(u"tonsite://"_q, Qt::CaseInsensitive)) {

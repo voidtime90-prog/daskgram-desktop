@@ -141,7 +141,7 @@ void SetCrashAnnotationsGL() {
 base::options::toggle OptionSkipUrlSchemeRegister({
 	.id = kOptionSkipUrlSchemeRegister,
 	.name = "Skip URL scheme register",
-	.description = "Don't re-register tg:// URL scheme on autoupdate.",
+	.description = "Don't re-register dg:// URL scheme on autoupdate.",
 });
 
 } // namespace
@@ -1244,7 +1244,7 @@ void Application::checkStartUrls() {
 
 bool Application::openLocalUrl(const QString &url, QVariant context) {
 	const auto urlTrimmed = url.trimmed();
-	const auto protocol = u"tg://"_q;
+	const auto protocol = u"dg://"_q;
 	if (urlTrimmed.startsWith(protocol, Qt::CaseInsensitive)
 		&& !passcodeLocked()) {
 		const auto command = urlTrimmed.mid(protocol.size());
@@ -1258,7 +1258,7 @@ bool Application::openLocalUrl(const QString &url, QVariant context) {
 			return true;
 		}
 	}
-	return openCustomUrl("tg://", LocalUrlHandlers(), url, context);
+	return openCustomUrl("dg://", LocalUrlHandlers(), url, context);
 }
 
 bool Application::openInternalUrl(const QString &url, QVariant context) {
@@ -2041,7 +2041,7 @@ void Application::RegisterUrlScheme() {
 	base::Platform::RegisterUrlScheme(base::Platform::UrlSchemeDescriptor{
 		.executable = Platform::ExecutablePathForShortcuts(),
 		.arguments = arguments,
-		.protocol = u"tg"_q,
+		.protocol = u"dg"_q,
 		.protocolName = u"DaskGram Link"_q,
 		.shortAppName = u"daskgram"_q,
 		.longAppName = QCoreApplication::applicationName(),

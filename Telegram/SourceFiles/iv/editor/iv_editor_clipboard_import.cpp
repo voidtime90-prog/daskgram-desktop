@@ -159,7 +159,7 @@ constexpr auto kMaxDataUriHeaderLength = 256;
 [[nodiscard]] uint64 MediaIdFromIdentity(
 		const QString &identity,
 		const QString &kind) {
-	const auto prefix = u"tg://"_q + kind + u"?"_q;
+	const auto prefix = u"dg://"_q + kind + u"?"_q;
 	if (!identity.startsWith(prefix, Qt::CaseInsensitive)) {
 		return 0;
 	}

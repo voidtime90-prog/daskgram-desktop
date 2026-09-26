@@ -2163,8 +2163,8 @@ QString SettingsDeepLink(
 	};
 	const auto url = [](const QString &path) {
 		return path.isEmpty()
-			? u"tg://settings"_q
-			: (u"tg://settings/"_q + path);
+			? u"dg://settings"_q
+			: (u"dg://settings/"_q + path);
 	};
 	if (!controlId.isEmpty()) {
 		const auto control = router.findPath(u"settings"_q, [&](
