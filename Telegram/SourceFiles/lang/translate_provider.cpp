@@ -19,6 +19,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "spellcheck/spellcheck_types.h"
 #include "platform/platform_translate_provider.h"
 
+#include <memory>
+
 namespace {
 
 // DaskGram: Google Translate by default (free public endpoint, no API key).
@@ -42,16 +44,64 @@ base::options::option<QString> OptionTranslateUrlTemplate({
 
 namespace Ui {
 
+namespace {
+
+// DaskGram: try the direct Google Translate request first; if it yields no
+// text (the free endpoint is rate-limited from some networks, or the request
+// cannot reach Google at all), retry through our own server, which translates
+// with the same backend. The base requestBatch() routes every item through
+// request(), so the batched path keeps this behaviour as well.
+class GoogleThenServerProvider final : public TranslateProvider {
+public:
+	GoogleThenServerProvider(
+		std::unique_ptr<TranslateProvider> direct,
+		std::unique_ptr<TranslateProvider> server)
+	: _direct(std::move(direct))
+	, _server(std::move(server)) {
+	}
+
+	[[nodiscard]] bool supportsMessageId() const override {
+		return false;
+	}
+
+	void request(
+			TranslateProviderRequest request,
+			LanguageId to,
+			Fn<void(TranslateProviderResult)> done) override {
+		const auto server = _server.get();
+		_direct->request(request, to, [=](
+				TranslateProviderResult result) mutable {
+			if (result.error == TranslateProviderError::None
+				&& result.text.has_value()
+				&& !result.text->text.isEmpty()) {
+				done(std::move(result));
+			} else {
+				server->request(request, to, done);
+			}
+		});
+	}
+
+private:
+	const std::unique_ptr<TranslateProvider> _direct;
+	const std::unique_ptr<TranslateProvider> _server;
+
+};
+
+} // namespace
+
 std::unique_ptr<TranslateProvider> CreateTranslateProvider(
 		not_null<Main::Session*> session) {
-	// DaskGram: fall back to Google Translate when no custom template is set,
-	// so translation no longer depends on a server-side provider.
+	// DaskGram: fall back to Google Translate when no custom template is set.
+	// The direct Google request is tried first, with our own server as a
+	// backstop for the networks where the free endpoint is not usable.
 	const auto custom = OptionTranslateUrlTemplate.value();
 	const auto urlTemplate = custom.isEmpty()
 		? kDaskGramTranslateUrl
 		: custom;
 	if (urlTemplate.contains(u"%q"_q)) {
-		return CreateUrlTranslateProvider(urlTemplate);
+		return std::make_unique<GoogleThenServerProvider>(
+			CreateUrlTranslateProvider(urlTemplate),
+			CreateMTProtoTranslateProvider(session));
 	}
 	if (Core::App().settings().usePlatformTranslation()
 		&& Platform::IsTranslateProviderAvailable()) {
