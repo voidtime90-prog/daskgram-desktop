@@ -201,8 +201,7 @@ public:
 		url.replace(
 			u"%q"_q,
 			QString::fromLatin1(
-				QUrl::toPercentEncoding(
-					TextUtilities::EscapeForHtml(request.text.text))));
+				QUrl::toPercentEncoding(request.text.text)));
 		url.replace(
 			u"%f"_q,
 			QString::fromLatin1(QUrl::toPercentEncoding(from)));

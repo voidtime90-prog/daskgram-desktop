@@ -16,9 +16,15 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history_item.h"
 #include "lang/translate_mtproto_provider.h"
 #include "lang/translate_url_provider.h"
+#include "spellcheck/spellcheck_types.h"
 #include "platform/platform_translate_provider.h"
 
 namespace {
+
+// DaskGram: Google Translate by default (free public endpoint, no API key).
+const auto kDaskGramTranslateUrl = QString::fromLatin1(
+	"https://translate.googleapis.com/translate_a/single"
+	"?client=gtx&dt=t&sl=%f&tl=%t&q=%q");
 
 base::options::option<QString> OptionTranslateUrlTemplate({
 	.id = "translate-url-template",
@@ -33,9 +39,13 @@ namespace Ui {
 
 std::unique_ptr<TranslateProvider> CreateTranslateProvider(
 		not_null<Main::Session*> session) {
-	const auto urlTemplate = OptionTranslateUrlTemplate.value();
-	if (!urlTemplate.isEmpty()
-		&& urlTemplate.contains(u"%q"_q)) {
+	// DaskGram: fall back to Google Translate when no custom template is set,
+	// so translation no longer depends on a server-side provider.
+	const auto custom = OptionTranslateUrlTemplate.value();
+	const auto urlTemplate = custom.isEmpty()
+		? kDaskGramTranslateUrl
+		: custom;
+	if (urlTemplate.contains(u"%q"_q)) {
 		return CreateUrlTranslateProvider(urlTemplate);
 	}
 	if (Core::App().settings().usePlatformTranslation()

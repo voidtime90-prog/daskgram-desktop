@@ -106,6 +106,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "info/statistics/info_statistics_widget.h"
 #include "lang/lang_keys.h"
 #include "core/application.h"
+#include "core/core_settings.h"
 #include "main/main_app_config.h"
 #include "main/main_session.h"
 #include "main/main_session_settings.h"
@@ -1921,16 +1922,31 @@ void FillContextMenuItems(
 				&& !translate.text.isEmpty()
 				&& !Ui::SkipTranslate(translate)) {
 				result->addAction(tr::lng_context_translate(tr::now), [=] {
-					if (const auto item = owner->message(itemId)) {
-						list->controller()->show(Box(
-							Ui::TranslateBox,
-							item->history()->peer,
-							mediaHasTextForCopy
-								? MsgId()
-								: item->fullId().msg,
-							translate,
-							list->hasCopyRestriction(view->data())));
+					const auto item = owner->message(itemId);
+					if (!item) {
+						return;
 					}
+					const auto history = item->history();
+					// DaskGram: translate right in the bubble, into the
+					// language selected in the client settings.
+					if (history->translateOfferedFrom()) {
+						const auto to = Core::App().settings().translateTo();
+						if (to) {
+							history->translateTo(to);
+							if (const auto migrated = history->migrateFrom()) {
+								migrated->translateTo(to);
+							}
+							return;
+						}
+					}
+					list->controller()->show(Box(
+						Ui::TranslateBox,
+						history->peer,
+						mediaHasTextForCopy
+							? MsgId()
+							: item->fullId().msg,
+						translate,
+						list->hasCopyRestriction(view->data())));
 				}, &st::menuIconTranslate);
 			}
 		}

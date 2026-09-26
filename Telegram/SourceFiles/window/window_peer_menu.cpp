@@ -13,6 +13,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/about_box.h"
 #include "boxes/share_box.h"
 #include "boxes/star_gift_box.h"
+#include "boxes/translate_box.h"
 #include "chat_helpers/compose/compose_show.h"
 #include "chat_helpers/message_field.h"
 #include "chat_helpers/share_message_phrase_factory.h"
@@ -1078,20 +1079,31 @@ void Filler::addExportChat() {
 }
 
 void Filler::addTranslate() {
-	if (_peer->translationFlag() != PeerData::TranslationFlag::Disabled
-		|| !_peer->session().premium()
-		|| !Core::App().settings().translateChatEnabled()) {
+	if (!Core::App().settings().translateChatEnabled()) {
 		return;
 	}
 	const auto history = _peer->owner().historyLoaded(_peer);
-	if (!history
-		|| !history->translateOfferedFrom()
-		|| history->translatedTo()) {
+	if (!history) {
 		return;
 	}
-	_addAction(tr::lng_context_translate(tr::now), [=] {
-		history->peer->saveTranslationDisabled(false);
-	}, &st::menuIconTranslate);
+	// DaskGram: translate or untranslate the whole chat without Premium.
+	if (history->translatedTo()) {
+		_addAction(tr::lng_translate_show_original(tr::now), [=] {
+			history->translateTo({});
+			if (const auto migrated = history->migrateFrom()) {
+				migrated->translateTo({});
+			}
+		}, &st::menuIconTranslate);
+	} else if (history->translateOfferedFrom()) {
+		_addAction(tr::lng_context_translate(tr::now), [=] {
+			if (const auto to = Ui::ChooseTranslateTo(history)) {
+				history->translateTo(to);
+				if (const auto migrated = history->migrateFrom()) {
+					migrated->translateTo(to);
+				}
+			}
+		}, &st::menuIconTranslate);
+	}
 }
 
 void Filler::addReport() {

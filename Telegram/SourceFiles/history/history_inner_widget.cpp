@@ -76,6 +76,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/star_gift_box.h" // ShowStarGiftBox
 #include "boxes/sticker_set_box.h"
 #include "boxes/translate_box.h"
+#include "core/core_settings.h"
 #include "chat_helpers/message_field.h"
 #include "chat_helpers/emoji_interactions.h"
 #include "history/history_widget.h"
@@ -3677,6 +3678,19 @@ void HistoryInner::showContextMenu(QContextMenuEvent *e, bool showFromTouch) {
 						if (!translate.text.isEmpty()
 							&& !Ui::SkipTranslate(translate)) {
 							_menu->addAction(tr::lng_context_translate(tr::now), [=] {
+								const auto history = _history;
+								// DaskGram: translate right in the bubble,
+								// into the language from the client settings.
+								if (history->translateOfferedFrom()) {
+									const auto to = Core::App().settings().translateTo();
+									if (to) {
+										history->translateTo(to);
+										if (const auto migrated = history->migrateFrom()) {
+											migrated->translateTo(to);
+										}
+										return;
+									}
+								}
 								_controller->show(Box(
 									Ui::TranslateBox,
 									peer,

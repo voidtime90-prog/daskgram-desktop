@@ -30,7 +30,9 @@ namespace HistoryView {
 namespace {
 
 constexpr auto kEnoughForRecognition = 10;
-constexpr auto kEnoughForTranslation = 6;
+// DaskGram: allow translation even in very short chats, instead of only
+// when a bunch of 6+ messages was recognized.
+constexpr auto kEnoughForTranslation = 1;
 constexpr auto kMaxCheckInBunch = 100;
 constexpr auto kRequestLengthLimit = 24 * 1024;
 constexpr auto kRequestCountLimit = 20;
@@ -58,20 +60,10 @@ void TranslateTracker::setup() {
 	const auto peer = _history->peer;
 	peer->updateFull();
 
-	const auto channel = peer->asChannel();
-	auto autoTranslationValue = (channel
-		? (channel->flagsValue() | rpl::type_erased)
-		: rpl::single(Data::Flags<ChannelDataFlags>::Change({}, {}))
-		) | rpl::map([=](Data::Flags<ChannelDataFlags>::Change data) {
-		return (data.value & ChannelDataFlag::AutoTranslation);
-	}) | rpl::distinct_until_changed();
-
-	using namespace rpl::mappers;
-	_trackingLanguage = rpl::combine(
-		Core::App().settings().translateChatEnabledValue(),
-		Data::AmPremiumValue(&_history->session()),
-		std::move(autoTranslationValue),
-		_1 && (_2 || _3));
+	// DaskGram: recognize message languages for every account in every chat.
+	// Upstream gates this behind Telegram Premium or a channel
+	// auto-translation flag, so on our server inline translation never ran.
+	_trackingLanguage = Core::App().settings().translateChatEnabledValue();
 	_trackingLanguage.value() | rpl::on_next([=](bool tracking) {
 		_trackingLifetime.destroy();
 		if (tracking) {
