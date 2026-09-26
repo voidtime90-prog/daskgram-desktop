@@ -524,8 +524,8 @@ History *HistoryFromMimeData(
 		auto text = mime->text().trimmed();
 		if (text.startsWith('@')) {
 			text = text.mid(1);
-		} else if (text.startsWith(u"https://t.me/"_q)) {
-			text = text.mid(13);
+		} else if (text.startsWith(u"https://daskgram.xyz/"_q)) {
+			text = text.mid(21);
 		} else {
 			return nullptr;
 		}

@@ -941,7 +941,7 @@ void EditAllowedReactionsBox(
 				tr::lng_manage_peer_reactions_paid_link([=](QString text) {
 					return tr::link(
 						text,
-						u"https://telegram.org/tos/stars"_q);
+						u"https://daskgram.xyz/tos/stars"_q);
 				}),
 				tr::marked));
 	}

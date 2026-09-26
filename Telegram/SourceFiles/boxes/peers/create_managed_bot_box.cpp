@@ -397,7 +397,7 @@ void CreateManagedBotBox(
 				const auto current = premium ? premiumLimit : defaultLimit;
 				const auto bot = tr::link(
 					u"@BotFather"_q,
-					u"https://t.me/botfather?start=deletebot"_q);
+					u"https://daskgram.xyz/botfather?start=deletebot"_q);
 				if (premium || !premiumPossible) {
 					using WeakToast = base::weak_ptr<Ui::Toast::Instance>;
 					const auto toast = std::make_shared<WeakToast>();

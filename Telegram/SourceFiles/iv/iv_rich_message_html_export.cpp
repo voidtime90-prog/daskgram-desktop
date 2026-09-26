@@ -364,7 +364,7 @@ struct EntityTags {
 	case EntityType::Phone:
 		return LinkTags(u"tel:"_q + inner.toString());
 	case EntityType::Mention:
-		return LinkTags(u"https://t.me/"_q
+		return LinkTags(u"https://daskgram.xyz/"_q
 			+ inner.toString().mid(inner.startsWith(QChar('@')) ? 1 : 0));
 	case EntityType::MentionName: {
 		const auto fields = TextUtilities::MentionNameDataToFields(
@@ -1013,7 +1013,7 @@ void SerializeBlock(
 	case Kind::Channel: {
 		const auto link = block.username.isEmpty()
 			? QString()
-			: u"https://t.me/"_q + block.username;
+			: u"https://daskgram.xyz/"_q + block.username;
 		const auto href = AnchorHref(link);
 		*out += u"<div class=\"channel\"%1>"_q.arg(
 			IdAttribute(block.anchorId));

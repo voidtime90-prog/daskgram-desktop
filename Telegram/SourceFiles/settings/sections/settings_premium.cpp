@@ -1878,7 +1878,7 @@ void StartPremiumPayment(
 			.startAutoSubmit = true,
 		});
 	} else if (!slug.isEmpty()) {
-		UrlClickHandler::Open("https://t.me/$" + slug);
+		UrlClickHandler::Open("https://daskgram.xyz/$" + slug);
 	}
 }
 

@@ -757,7 +757,7 @@ TextWithEntities GenerateDefaultBannedRightsChangeText(
 		not_null<ChannelData*> channel,
 		const MTPForumTopic &topic) {
 	return topic.match([&](const MTPDforumTopic &data) {
-		const auto url = u"https://t.me/c/%1/%2"_q.arg(
+		const auto url = u"https://daskgram.xyz/c/%1/%2"_q.arg(
 			peerToChannel(channel->id).bare).arg(
 				data.vid().v);
 		return tr::link(
