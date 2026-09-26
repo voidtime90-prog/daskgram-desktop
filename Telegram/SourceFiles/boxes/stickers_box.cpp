@@ -2312,12 +2312,8 @@ void StickersBox::Inner::AddressField::correctValue(
 	auto removeFromBeginning = {
 		u"http://"_q,
 		u"https://"_q,
-		u"www.t.me/"_q,
-		u"www.telegram.me/"_q,
-		u"www.telegram.dog/"_q,
-		u"t.me/"_q,
-		u"telegram.me/"_q,
-		u"telegram.dog/"_q,
+		u"www.daskgram.xyz/"_q,
+		u"daskgram.xyz/"_q,
 		u"addstickers/"_q,
 	};
 	for (const auto &removePhrase : removeFromBeginning) {

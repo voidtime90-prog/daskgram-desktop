@@ -157,7 +157,7 @@ void ExportToCalendar(TimeId date, const QString &messageText) {
 		"DTSTART:%1\r\n"
 		"DTEND:%2\r\n"
 		"DTSTAMP:%3\r\n"
-		"UID:telegram-%4-%7@telegram.org\r\n"
+		"UID:daskgram-%4-%7@daskgram.xyz\r\n"
 		"SUMMARY:%5\r\n"
 		"DESCRIPTION:%6\r\n"
 		"END:VEVENT\r\n"

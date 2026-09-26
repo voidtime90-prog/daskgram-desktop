@@ -1665,15 +1665,15 @@ uR"HTML(
   guard.channel.addEventListener('close',check,{once:true});guard.first.addEventListener('connectionstatechange',check);guard.second.addEventListener('connectionstatechange',check);
  }catch(error){restartRtc(guard)}};
 local.onopen=()=>{local.send(JSON.stringify({t:'auth',token,browser}));startRtc()};
-local.onclose=()=>{stopRtc();localClosed=true;state.textContent='Telegram Desktop disconnected. Reopen the browser from Proxy Settings.';if(initialized)port.postMessage({t:'close'})};
-local.onerror=()=>{state.textContent='Could not connect to Telegram Desktop.'};
+local.onclose=()=>{stopRtc();localClosed=true;state.textContent='DaskGram disconnected. Reopen the browser from Proxy Settings.';if(initialized)port.postMessage({t:'close'})};
+local.onerror=()=>{state.textContent='Could not connect to DaskGram.'};
 const openBridge=url=>{if(iframe||localClosed)return;iframe=document.createElement('iframe');iframe.sandbox='allow-scripts allow-same-origin';iframe.referrerPolicy='no-referrer';
  iframe.onload=()=>{if(localClosed)return;if(initialized){state.textContent='The proxy page reloaded. Reopen the browser from Proxy Settings.';local.close();return}iframe.contentWindow.postMessage({t:'tproxy-init',v:1},relayOrigin,[channel.port2]);initialized=true;while(pending.length){const data=pending.shift();port.postMessage(data,[data])}};
  iframe.src=url;document.body.appendChild(iframe)};
 local.onmessage=e=>{if(e.data instanceof ArrayBuffer){if(initialized)port.postMessage(e.data,[e.data]);else pending.push(e.data);return}
  if(typeof e.data!=='string')return;let control=null;try{control=JSON.parse(e.data)}catch(error){return}
  if(!control||typeof control!=='object'||control.t!=='bridge'||typeof control.url!=='string'||!control.url.startsWith(relayBase+'?bridge='))return;openBridge(control.url)};
-port.onmessage=e=>{if(e.data instanceof ArrayBuffer){if(local.readyState===WebSocket.OPEN){if(local.bufferedAmount>localQueueLimit-e.data.byteLength){state.textContent='Telegram Desktop is not consuming proxy data.';local.close();return}try{local.send(e.data)}catch(error){local.close()}}return}
+port.onmessage=e=>{if(e.data instanceof ArrayBuffer){if(local.readyState===WebSocket.OPEN){if(local.bufferedAmount>localQueueLimit-e.data.byteLength){state.textContent='DaskGram is not consuming proxy data.';local.close();return}try{local.send(e.data)}catch(error){local.close()}}return}
  if(e.data&&e.data.t==='status'){const s=e.data.state;state.textContent=s==='connected'?'Connected. Keep this tab open.':s==='failed'?'The proxy site is unavailable.':'Connecting to the proxy site…';if(local.readyState===WebSocket.OPEN)local.send(JSON.stringify(e.data));return}
  if(e.data&&e.data.t==='traffic'){const up=e.data.up,down=e.data.down;if(Number.isSafeInteger(up)&&up>=0&&Number.isSafeInteger(down)&&down>=0){traffic.up+=up;traffic.down+=down}return}
  if(e.data&&e.data.t==='close'){state.textContent='The proxy site closed the connection.';local.close()}}
